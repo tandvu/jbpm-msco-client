@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <!-- Inherit our applications main module.                      -->
+  <inherits name='com.msco.mil.MscoClient' />
+
+  <!-- Specify the path to any remote services.                   -->
+  <servlet path="/MscoClient/greet" class="com.msco.mil.server.GreetingServiceImpl" />
+
+</module>
