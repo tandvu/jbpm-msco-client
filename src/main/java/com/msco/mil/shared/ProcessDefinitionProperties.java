@@ -1,6 +1,7 @@
 package com.msco.mil.shared;
 
 import java.util.Date;
+import com.msco.mil.shared.ProcessDefinition;
 
 import com.google.gwt.editor.client.Editor.Path;
 import com.sencha.gxt.core.client.ValueProvider;
