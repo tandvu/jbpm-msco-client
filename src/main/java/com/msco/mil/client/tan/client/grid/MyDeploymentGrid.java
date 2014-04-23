@@ -6,20 +6,20 @@ import java.util.List;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.ui.Widget;
 import com.msco.mil.shared.Deployment;
 import com.msco.mil.shared.MyDeploymentProperties;
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
-public class MyDeploymentGrid extends Widget {
+public class MyDeploymentGrid extends ContentPanel {
 	private static final MyDeploymentProperties deploymentProps = GWT
 			.create(MyDeploymentProperties.class);
 	private Grid<Deployment> deploymentGrid;
 
-	public MyDeploymentGrid() {
+	public MyDeploymentGrid() {        
 		// Create columns
 		ColumnConfig<Deployment, String> groupIdCol = new ColumnConfig<Deployment, String>(
 				deploymentProps.groupId(), 150, "Group ID");
@@ -78,10 +78,13 @@ public class MyDeploymentGrid extends Widget {
 		// listStore.addAll(TestData.getFriends());
 
 		// Build Grid (listStore, columnModel)
+
 		deploymentGrid = new Grid<Deployment>(listStore, colModel);
 		// grid.getView().setAutoExpandColumn(nameCol);
 		deploymentGrid.setBorders(true);
 		deploymentGrid.getView().setStripeRows(true);
 		deploymentGrid.getView().setColumnLines(true);
+		this.add(deploymentGrid);
+		this.setHeaderVisible(false);
 	}
 }
