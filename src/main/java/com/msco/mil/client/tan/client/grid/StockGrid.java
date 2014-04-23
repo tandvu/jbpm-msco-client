@@ -10,9 +10,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.msco.mil.client.sencha.gxt.examples.resources.client.TestData;
-import com.msco.mil.client.sencha.gxt.examples.resources.client.model.Stock;
-import com.msco.mil.client.sencha.gxt.examples.resources.client.model.StockProperties;
+import com.msco.mil.client.tan.client.util.MscoClientDefines;
+import com.msco.mil.shared.Stock;
+import com.msco.mil.shared.StockProperties;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
@@ -61,7 +61,7 @@ public class StockGrid extends ContentPanel {
 		ColumnModel<Stock> cm = new ColumnModel<Stock>(storeList);
 
 		ListStore<Stock> store = new ListStore<Stock>(stockProps.key());
-		store.addAll(TestData.getStocks());
+		store.addAll(MscoClientDefines.getStocks());
 
 		final Grid<Stock> grid = new Grid<Stock>(store, cm);
 		grid.getView().setAutoExpandColumn(nameCol);

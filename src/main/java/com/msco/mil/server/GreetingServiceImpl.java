@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +21,6 @@ import org.jboss.resteasy.client.ClientRequestFactory;
 import org.jboss.resteasy.client.ClientResponse;
 import org.kie.api.KieBase;
 import org.kie.api.KieServices;
-import org.kie.api.definition.process.Process;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
@@ -33,13 +31,12 @@ import org.kie.services.client.api.RestRequestHelper;
 import org.kie.services.client.serialization.jaxb.impl.deploy.JaxbDeploymentJobResult;
 import org.kie.services.client.serialization.jaxb.impl.task.JaxbTaskSummaryListResponse;
 
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.msco.mil.client.GreetingService;
 import com.msco.mil.shared.Actor;
-import com.msco.mil.shared.Deployment;
+import com.msco.mil.shared.MyDeployment;
 import com.msco.mil.shared.ProcessInstance;
 import com.msco.mil.shared.Task;
-import com.google.gwt.thirdparty.streamhtmlparser.util.EntityResolver.Status;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
 /**
@@ -47,7 +44,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  */
 @SuppressWarnings("serial")
 public class GreetingServiceImpl extends RemoteServiceServlet implements GreetingService {
-    private List<Deployment> deploymentList = new ArrayList<Deployment>();
+    private List<MyDeployment> deploymentList = new ArrayList<MyDeployment>();
     private List<ProcessInstance> activeProcessInstanceList = new ArrayList<ProcessInstance>();
     private List<ProcessInstance> completedProcessInstanceList = new ArrayList<ProcessInstance>();
     private List<Task> taskList = new ArrayList<Task>();
@@ -58,7 +55,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
     // private static final Logger logger =
     // LoggerFactory.getLogger(GreetingServiceImpl.class);
     public GreetingServiceImpl() {
-        System.out.println("GreetingServiceImpl====================");
+        System.out.println("hello");
         Actor actor = new Actor();
         actor.setName("krisv");
         actor.setColor("black");
@@ -76,7 +73,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
                         processDeploymentList();
                         processProcessInstanceList();
                         processTaskList();
-                        
                         Thread.sleep(5000);
                     }
                     catch (InterruptedException e) {
@@ -110,11 +106,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
         KieContainer kContainer = kieServices.getKieClasspathContainer();
         KieBase b = kContainer.getKieBase();
         System.out.println(deploymentId + " tasks size:" + tasks.size());
-//        Collection<Process> processList = b.getProcesses();
-//        for (Process process : processList)
-//        {
-//        	System.err.println("GreetingServiceImpl.process.id: " + process.getId());
-//        }
     }
     
     public void parseDeploymentListJson(String the_json) {
@@ -133,7 +124,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
                     // System.out.println(json.get("groupId") + " " +
                     // json.get("status") + " " + json.get("version"));
                     // System.out.println(json.toString());
-                    Deployment deployment = new Deployment();
+                    MyDeployment deployment = new MyDeployment();
                     deployment.setArtifactId((String) json.get("artifactId"));
                     deployment.setGroupId((String) json.get("groupId"));
                     deployment.setKbaseName((String) json.get("kbaseName"));
@@ -142,7 +133,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
                     deployment.setStrategy((String) json.get("strategy"));
                     deployment.setVersion((String) json.get("version"));
                     deployment.setIdentifier((String) json.get("identifier"));
-//                    System.err.println("GreetingServiceImpl.deployment.getIdentifier(): " + deployment.getIdentifier());
                     deploymentList.add(deployment);
                 }
             }
@@ -218,7 +208,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
         activeProcessInstanceList.clear();
         completedProcessInstanceList.clear();
         synchronized (activeProcessInstanceList) {
-            for (Deployment d : deploymentList) {
+            for (MyDeployment d : deploymentList) {
                 try {
                     requestFactory = RestRequestHelper.createRequestFactory(deploymentUrl, userId, password);
                     String urlString = new URL(deploymentUrl, deploymentUrl.getPath() + "rest/runtime/"
@@ -376,7 +366,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
         }
     }
     
-    public List<Deployment> getDeployments() throws IllegalArgumentException {
+    public List<MyDeployment> getDeployments() throws IllegalArgumentException {
         return deploymentList;
     }
     
@@ -385,7 +375,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
             unDeploy(deploymentId);
             Thread.sleep(1000);
             processDeploymentList();
-            for (Deployment d : deploymentList) {
+            for (MyDeployment d : deploymentList) {
                 if (d.getIdentifier().equals(deploymentId)) {
                     return "Deployment may have processes running, cannot undeploy.";
                 }

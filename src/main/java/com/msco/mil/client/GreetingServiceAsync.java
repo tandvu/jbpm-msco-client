@@ -2,7 +2,7 @@ package com.msco.mil.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.msco.mil.shared.Deployment;
+import com.msco.mil.shared.MyDeployment;
 
 
 public interface GreetingServiceAsync {
@@ -11,7 +11,7 @@ public interface GreetingServiceAsync {
      * 
      * @see com.msco.mil.client.GreetingService
      */
-    void getDeployments(AsyncCallback<java.util.List<com.msco.mil.shared.Deployment>> callback);
+    void getDeployments(AsyncCallback<java.util.List<MyDeployment>> callback);
     
     void getProcessInstances(Integer status, AsyncCallback<java.util.List<com.msco.mil.shared.ProcessInstance>> callback);
     void getTasks(AsyncCallback<java.util.List<com.msco.mil.shared.Task>> callback);

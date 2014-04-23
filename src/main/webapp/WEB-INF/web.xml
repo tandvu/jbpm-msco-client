@@ -5,18 +5,17 @@
 
 <web-app>
 
-  <!-- Servlets 
+  <!-- Servlets -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
-<servlet-class>com.msco.mil.server.GreetingServiceImpl</servlet-class>
-<servlet-class>com.msco.mil.server.RestEngineServiceImpl</servlet-class>
+    <servlet-class>com.msco.mil.server.GreetingServiceImpl</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
   <servlet-mapping>
     <servlet-name>greetServlet</servlet-name>
     <url-pattern>/MscoClient/greet</url-pattern>
-  </servlet-mapping> -->
+  </servlet-mapping>
 
   <!-- Default page to serve -->
   <welcome-file-list>

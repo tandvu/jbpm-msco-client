@@ -7,11 +7,12 @@ import com.sencha.gxt.data.shared.PropertyAccess;
 import com.msco.mil.shared.Actor;
 
 
-public interface ActorProperties extends PropertyAccess<Actor> {
+public interface FriendProperties extends PropertyAccess<Actor> {
     @Path("key")
-    ModelKeyProvider<Actor> key();
+    ModelKeyProvider<Friend> key();
     
-    ValueProvider<Actor, String> name();
-    
-    ValueProvider<Actor, String> color();
+    ValueProvider<Friend, String> name();
+    ValueProvider<Friend, Integer> age();
+    ValueProvider<Friend, Boolean> isMale();
+
 }

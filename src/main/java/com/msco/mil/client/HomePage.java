@@ -5,7 +5,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.msco.mil.client.tan.client.TanPortalLayout;
+import com.msco.mil.client.tan.client.PortalLayoutPage;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -30,7 +30,7 @@ public class HomePage implements IsWidget, EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		RootPanel.get().add(new TanPortalLayout());
+		RootPanel.get().add(new PortalLayoutPage());
 	}
 
 	public Widget asWidget() {

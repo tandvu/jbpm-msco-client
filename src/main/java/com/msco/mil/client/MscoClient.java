@@ -4,29 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.DateCell;
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.safecss.shared.SafeStyles;
-import com.google.gwt.safecss.shared.SafeStylesUtils;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.msco.mil.shared.Actor;
 import com.msco.mil.shared.ActorProperties;
-import com.msco.mil.shared.Deployment;
+import com.msco.mil.shared.MyDeployment;
 import com.msco.mil.shared.MyDeploymentProperties;
 import com.msco.mil.shared.ProcessDefinition;
 import com.msco.mil.shared.ProcessDefinitionProperties;
@@ -58,6 +38,26 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.info.Info;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.DateCell;
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.safecss.shared.SafeStyles;
+import com.google.gwt.safecss.shared.SafeStylesUtils;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 
 /**
@@ -79,7 +79,7 @@ public class MscoClient implements IsWidget, EntryPoint {
             .create(ProcessDefinitionProperties.class);
     private static final ActorProperties propsActor = GWT.create(ActorProperties.class);
     private Grid<ProcessInstance> gridProcessInstance = null;
-    private Grid<Deployment> gridDeployments = null;
+    private Grid<MyDeployment> gridDeployments = null;
     private Grid<Task> gridTaskSummary = null;
     private Grid<ProcessDefinition> gridProcessDefinition = null;
     private Grid<Actor> gridActor = null;
@@ -95,7 +95,6 @@ public class MscoClient implements IsWidget, EntryPoint {
      * This is the entry point method.
      */
     public void onModuleLoad() {
-    	System.out.println("MscoClient.onModuleLoad()");
         final RootLayoutPanel rootPanel = RootLayoutPanel.get();
         viewport = new Viewport();
         viewport.add(asWidget());
@@ -104,41 +103,26 @@ public class MscoClient implements IsWidget, EntryPoint {
     
     public Widget deploymentList() {
         final ContentPanel contentPanel = new ContentPanel();
-   
         contentPanel.setHeadingText("Deployment Units");
         contentPanel.addStyleName("margin-10");
         VerticalLayoutContainer con = new VerticalLayoutContainer();
         contentPanel.setWidget(con);
-               
-        //Build column header?
-        ColumnConfig<Deployment, String> groupIdCol = new ColumnConfig<Deployment, String>(propsDeployment.groupId(),
+        ColumnConfig<MyDeployment, String> identifierCol = new ColumnConfig<MyDeployment, String>(
+                propsDeployment.identifier(), 250, "Deployment");
+        ColumnConfig<MyDeployment, String> groupIdCol = new ColumnConfig<MyDeployment, String>(propsDeployment.groupId(),
                 150, "Group ID");
-        ColumnConfig<Deployment, String> artifactIdCol = new ColumnConfig<Deployment, String>(
+        ColumnConfig<MyDeployment, String> artifactIdCol = new ColumnConfig<MyDeployment, String>(
                 propsDeployment.artifactId(), 150, "Artifact");
-        ColumnConfig<Deployment, String> versionCol = new ColumnConfig<Deployment, String>(propsDeployment.version(),
+        ColumnConfig<MyDeployment, String> versionCol = new ColumnConfig<MyDeployment, String>(propsDeployment.version(),
                 150, "Version");
-        ColumnConfig<Deployment, String> kbaseNameCol = new ColumnConfig<Deployment, String>(
+        ColumnConfig<MyDeployment, String> kbaseNameCol = new ColumnConfig<MyDeployment, String>(
                 propsDeployment.kbaseName(), 150, "Kie Base Name");
-        ColumnConfig<Deployment, String> ksessionNameCol = new ColumnConfig<Deployment, String>(
+        ColumnConfig<MyDeployment, String> ksessionNameCol = new ColumnConfig<MyDeployment, String>(
                 propsDeployment.ksessionName(), 150, "Kie Session Name");
-        ColumnConfig<Deployment, String> strategyNameCol = new ColumnConfig<Deployment, String>(
+        ColumnConfig<MyDeployment, String> strategyNameCol = new ColumnConfig<MyDeployment, String>(
                 propsDeployment.strategy(), 150, "Strategy");
-        ColumnConfig<Deployment, String> statusCol = new ColumnConfig<Deployment, String>(propsDeployment.status(),
+        ColumnConfig<MyDeployment, String> statusCol = new ColumnConfig<MyDeployment, String>(propsDeployment.status(),
                 150, "Action");
-        ColumnConfig<Deployment, String> identifierCol = new ColumnConfig<Deployment, String>(
-        		propsDeployment.identifier(), 250, "Deployments");
-        
-//        identifierCol.setHeader(SafeHtmlUtils.fromSafeConstant("This is <b>bold</bold>"));
-//        identifierCol.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-//        identifierCol.setColumnHeaderClassName("msco-header");
-//        identifierCol.setHeader(SafeHtmlUtils.fromSafeConstant("Deployment<img src='http://sencha.com/img/sencha-large.png'>"));
-
-
-        
-//        identifierCol.setColumnHeaderClassName("msco-header");
-//        identifierCol.setAlignment(HorizontalAlignment.CENTER);
-        
-        //Set content of kbaseName cell if value is ""
         kbaseNameCol.setCell(new AbstractCell<String>() {
             @Override
             public void render(com.google.gwt.cell.client.Cell.Context context, String value, SafeHtmlBuilder sb) {
@@ -147,8 +131,6 @@ public class MscoClient implements IsWidget, EntryPoint {
                 }
             }
         });
-        
-        
         ksessionNameCol.setCell(new AbstractCell<String>() {
             @Override
             public void render(com.google.gwt.cell.client.Cell.Context context, String value, SafeHtmlBuilder sb) {
@@ -157,7 +139,6 @@ public class MscoClient implements IsWidget, EntryPoint {
                 }
             }
         });
-        
         TextButtonCell buttonUnDeploy = new TextButtonCell() {
             @Override
             public void render(com.google.gwt.cell.client.Cell.Context context, String value, SafeHtmlBuilder sb) {
@@ -167,12 +148,11 @@ public class MscoClient implements IsWidget, EntryPoint {
                 sb.append(html);
             }
         };
-        
         buttonUnDeploy.addSelectHandler(new SelectHandler() {
             public void onSelect(SelectEvent event) {
                 Context c = event.getContext();
                 int row = c.getIndex();
-                Deployment d = gridDeployments.getStore().get(row);
+                MyDeployment d = gridDeployments.getStore().get(row);
                 greetingService.undeploy(d.getIdentifier(), new AsyncCallback<String>() {
                     public void onFailure(Throwable caught) {
                         Info.display("Alert", "Network problem getting deployments list");
@@ -184,9 +164,8 @@ public class MscoClient implements IsWidget, EntryPoint {
                 });
             }
         });
-        
         statusCol.setCell((Cell<String>) buttonUnDeploy);
-        List<ColumnConfig<Deployment, ?>> l = new ArrayList<ColumnConfig<Deployment, ?>>();
+        List<ColumnConfig<MyDeployment, ?>> l = new ArrayList<ColumnConfig<MyDeployment, ?>>();
         l.add(identifierCol);
         l.add(groupIdCol);
         l.add(artifactIdCol);
@@ -195,13 +174,12 @@ public class MscoClient implements IsWidget, EntryPoint {
         l.add(ksessionNameCol);
         l.add(strategyNameCol);
         l.add(statusCol);
-        ColumnModel<Deployment> cm = new ColumnModel<Deployment>(l);
-        ListStore<Deployment> store = new ListStore<Deployment>(propsDeployment.key());
-        
-        gridDeployments = new Grid<Deployment>(store, cm);
+        ColumnModel<MyDeployment> cm = new ColumnModel<MyDeployment>(l);
+        ListStore<MyDeployment> store = new ListStore<MyDeployment>(propsDeployment.key());
+        gridDeployments = new Grid<MyDeployment>(store, cm);
         gridDeployments.getView().setStripeRows(true);
         gridDeployments.getView().setColumnLines(true);
-        gridDeployments.setBorders(true);
+        gridDeployments.setBorders(false);
         gridDeployments.setColumnReordering(true);
         con.add(gridDeployments, new VerticalLayoutData(1, 1));
         return contentPanel;
@@ -493,8 +471,6 @@ public class MscoClient implements IsWidget, EntryPoint {
         southData.setCollapseMini(true);
         widgetDeployment = deploymentList();
         conMain.setNorthWidget(widgetDeployment, northData);
-        
-        
         widgetProcessInstance = processInstanceList();
         conMain.setEastWidget(widgetProcessInstance, eastData);
         widgetTaskSummary = taskList();
@@ -502,22 +478,7 @@ public class MscoClient implements IsWidget, EntryPoint {
         widgetProcessDefinition = processDefinitionList();
         conMain.setCenterWidget(widgetProcessDefinition, centerData);
         widgetActors = actorList();
-        conMain.setWestWidget(widgetActors, westData); 
-       
-        /*
-        BorderLayoutContainer combineLayout = new BorderLayoutContainer();
-        
-        BorderLayoutData combineData = new BorderLayoutData(250);
-        combineData.setMargins(new Margins(5, 0, 0, 0));
-        combineData.setCollapsible(true);
-        combineData.setCollapseMini(true);
-        combineLayout.setNorthWidget(widgetProcessDefinition, combineData);
-        combineLayout.setSouthWidget(widgetActors, combineData);
-        
-        conMain.setCenterWidget(combineLayout, centerData);*/
-
-        
-        
+        conMain.setWestWidget(widgetActors, westData);
         /*
          * conMain.setWestWidget(westDirectoryTree(), westData); widgetCenter =
          * centerGooglePlaybackMap(); conMain.setCenterWidget(widgetCenter,
@@ -550,12 +511,12 @@ public class MscoClient implements IsWidget, EntryPoint {
     }
     
     public void updateLists() {
-        greetingService.getDeployments(new AsyncCallback<List<Deployment>>() {
+        greetingService.getDeployments(new AsyncCallback<List<MyDeployment>>() {
             public void onFailure(Throwable caught) {
                 Window.alert("Network problem getting Deployments list");
             }
             
-            public void onSuccess(List<Deployment> deployments) {
+            public void onSuccess(List<MyDeployment> deployments) {
                 if (deployments != null) {
                     if (deployments.size() == 0) {
                         gridDeployments.getStore().clear();
@@ -565,7 +526,6 @@ public class MscoClient implements IsWidget, EntryPoint {
                 }
             }
         });
-        
         greetingService.getProcessInstances(1, new AsyncCallback<List<ProcessInstance>>() {
             public void onFailure(Throwable caught) {
                 Window.alert("Network problem getting Active Process Instances list");

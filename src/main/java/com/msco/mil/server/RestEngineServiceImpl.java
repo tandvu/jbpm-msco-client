@@ -21,13 +21,13 @@ import org.jboss.resteasy.client.ClientResponse;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.msco.mil.client.tan.client.RestEngineService;
 import com.msco.mil.client.tan.client.util.MscoClientDefines;
-import com.msco.mil.shared.Deployment;
+import com.msco.mil.shared.MyDeployment;
 
 
 @SuppressWarnings("serial")
 public class RestEngineServiceImpl extends RemoteServiceServlet implements RestEngineService {
 	private JSONArray currentDeploymentArray = new JSONArray();
-	private List<Deployment> deploymentList = new ArrayList<Deployment>();
+	private List<MyDeployment> deploymentList = new ArrayList<MyDeployment>();
 	
     public RestEngineServiceImpl() {
         System.out.println("Constructor RestEngineServiceImpl====================");
@@ -56,25 +56,22 @@ public class RestEngineServiceImpl extends RemoteServiceServlet implements RestE
             }
         }).start();
     }
-
-    public List<Deployment> getDeployments() throws IllegalArgumentException {
+    
+    private String getJsonResponseStr(String restUrl)
+    {
+    	String jsonResponseStr = "";
+    	
 		try {			
-			//build deployment string
-			String deploymentUrlString = new URL(
-					MscoClientDefines.getConsoleUrl(),
-					MscoClientDefines.getDeploymentUrl()).toExternalForm();
-
 			//create client response in json
 			ClientResponse<String> response = MscoClientDefines
-					.getGetClientResponseInJason(deploymentUrlString);
+					.getGetClientResponseInJason(restUrl);
 
 			//build deployment list from json response
 			if (response != null && response.getStatus() == 200) {
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						new ByteArrayInputStream(
 								((String) response.getEntity()).getBytes())));
-				String deploymentArray = br.readLine();
-				buildDeploymentListFromResponse(deploymentArray);
+				jsonResponseStr = br.readLine();
 			}
 		} catch (HttpHostConnectException ee) {
 			ee.printStackTrace();
@@ -86,6 +83,20 @@ public class RestEngineServiceImpl extends RemoteServiceServlet implements RestE
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+    	
+    	return jsonResponseStr;
+    }
+
+    public List<MyDeployment> getDeployments() throws IllegalArgumentException {
+		String restDeploymentUrl = MscoClientDefines.getDeploymentUrl();
+		String jsonResponseStr = getJsonResponseStr(restDeploymentUrl);
+		
+    	JSONArray deploymentArray = (JSONArray) JSONSerializer
+				.toJSON(jsonResponseStr);
+			
+		if (!currentDeploymentArray.equals(deploymentArray)) {
+			buildDeploymentListFromResponse(jsonResponseStr);
 		}
 
         return deploymentList;
@@ -107,7 +118,7 @@ public class RestEngineServiceImpl extends RemoteServiceServlet implements RestE
 				deploymentList.clear();
 				for (Object js : currentDeploymentArray) {
 					JSONObject json = (JSONObject) js;
-					Deployment deployment = new Deployment();
+					MyDeployment deployment = new MyDeployment();
 					deployment.setArtifactId((String) json.get("artifactId"));
 					deployment.setGroupId((String) json.get("groupId"));
 					deployment.setKbaseName((String) json.get("kbaseName"));
@@ -125,191 +136,4 @@ public class RestEngineServiceImpl extends RemoteServiceServlet implements RestE
 			e.printStackTrace();
 		}
 	}
-	
-	/*
-	//==========================================
-	
-	//common variables defined
-	private String deploymentId = "org.jbpm:Evaluation:1.0";
-	private String url = "http://localhost:8080/jbpm-console/";
-	private String user = "krisv";
-	private String password = "krisv";
-	private String process = "evaluation";
-	private DefaultHttpClient httpclient;
-	private UsernamePasswordCredentials credentials;
-	private BasicScheme scheme;
-	private String restCall;
-	private HttpPost httppost;
-	private 
-	
-	 
-	//Initializing the HttpClient
-	private void initializeHttpClient() {
-	  try {
-	       httpclient = new DefaultHttpClient();
-	       credentials = new UsernamePasswordCredentials(user, password);
-	       scheme = new BasicScheme();
-	  } catch (Exception ex) {
-	       ex.printStackTrace();
-	  }
-	  }
-	 
-	//Starting the process
-	private void startProcessRestMethod() {
-	       restCall = "http://" + "localhost" + ":" + "8080" + "/"
-	            + "jbpm-console" + "/rest/runtime/" + deploymentId
-	            + "/process/" + process + "/start";
-	 
-	       try {
-	            httppost = new HttpPost(restCall);
-	            Header authorizationHeader = scheme.authenticate(credentials, httppost);
-	            httppost.addHeader(authorizationHeader);
-	            HttpResponse response = httpclient.execute(httppost);
-	 
-	            if (response != null) {
-				log.info("Response status line: " + response.getStatusLine());
-	            if (response.getStatusLine() != null) {
-	                 log.info("Response status code: "
-	                      + response.getStatusLine().getStatusCode());
-	            }
-	 
-	            HttpEntity entity = response.getEntity();
-	 
-	            if (entity != null) {
-	                 String output = EntityUtils.toString(entity);
-	                 createProcessInstanceResponse(output);
-	            }
-	       }
-	      } catch (ClientProtocolException ex) {
-	            ex.printStackTrace();
-	       } catch (AuthenticationException ex) {
-	            ex.printStackTrace();
-	       } catch (Exception ex) {
-	            ex.printStackTrace();
-	       } finally {
-	            closeHttpClient();
-	       }
-	  }
-	 
-	//Getting the process start response
-	private void createProcessInstanceResponse(String output) {
-	       try {
-	            JAXBContext jaxbContext = JAXBContext.newInstance(JaxbProcessInstanceResponse.class);
-	            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-	            processResponse = (JaxbProcessInstanceResponse) unmarshaller.unmarshal(new StringReader(output));
-	            log.info("processResponse: " + processResponse);
-	            log.info("id: " + processResponse.getId());
-	            log.info("process id: " + processResponse.getProcessId());
-	            log.info("process state: " + processResponse.getState());
-	       } catch (Exception e) {
-	            e.printStackTrace();
-	       }
-	  }
-	 
-	//Getting tasks for a user
-	private void getTasksForUser() {
-	       // get list of tasks
-	       restCall = "http://" + "localhost" + ":" + "8080" + "/"
-	            + "jbpm-console" + "/rest/task/query?taskOwner=" + user;
-	 
-	       try {
-	 
-	            httpget = new HttpGet(restCall);
-	            authorizationHeader = scheme.authenticate(credentials, httpget);
-	            httpget.addHeader(authorizationHeader);
-	            response = httpclient.execute(httpget);
-	 
-	            if (response != null) {
-	                 log.info("Task Response status line: "+ response.getStatusLine());
-	                 if (response.getStatusLine() != null) {
-	                      log.info("Task Response status code: "+ response.getStatusLine().getStatusCode());
-	                 }
-	 
-	            entity = response.getEntity();
-	            String output = EntityUtils.toString(entity);
-	 
-	            if (entity != null) {
-	                 createTaskSummaryResponse(output);
-	            }
-	            }
-	       } catch (ClientProtocolException ex) {
-	            ex.printStackTrace();
-	       } catch (AuthenticationException ex) {
-	            ex.printStackTrace();
-	       } catch (Exception ex) {
-	            ex.printStackTrace();
-	       } finally {
-	            closeHttpClient();
-	       }
-	}
-	 
-	//Process the response for the task query
-	private void createTaskSummaryResponse(String output) {
-	  try {
-	       JAXBContext jaxbContext = JAXBContext.newInstance(JaxbTaskSummaryListResponse.class);
-	       Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-	       JaxbTaskSummaryListResponse response = (JaxbTaskSummaryListResponse) unmarshaller.unmarshal(new StringReader(output));
-	       taskSummary = response.getResult();
-	       log.info("taskSummary:"+ taskSummary+ ", length:"+ (taskSummary != null ? taskSummary.size(): "taskSummary is null"));
-	  } catch (Exception ex) {
-	       ex.printStackTrace();
-	  }
-	  }
-	 
-	//Start a task
-	private void startTask(String taskId) {
-	       restCall = "http://" + "localhost" + ":" + "8080" + "/"
-	            + "jbpm-console" + "/rest/task/" + taskId + "/start";
-	 
-	       try {
-	            httppost = new HttpPost(restCall);
-	            authorizationHeader = scheme.authenticate(credentials, httppost);
-	            httppost.addHeader(authorizationHeader);
-	            response = httpclient.execute(httppost);
-	 
-	            if (response != null) {
-	                 log.info("Task start Response status line: "+ response.getStatusLine());
-	                 if (response.getStatusLine() != null) {
-	                      log.info("Task start Response status code: "+ response.getStatusLine().getStatusCode());
-	            }
-	            }
-	       } catch (ClientProtocolException ex) {
-	            ex.printStackTrace();
-	       } catch (AuthenticationException ex) {
-	            ex.printStackTrace();
-	       } catch (Exception ex) {
-	            ex.printStackTrace();
-	       } finally {
-	            closeHttpClient();
-	       }
-	}
-
-	//Complete a task
-	private void completeTask(String taskId) {
-	       restCall = "http://" + "localhost" + ":" + "8080" + "/"
-	            + "jbpm-console" + "/rest/task/" + taskId + "/complete";
-	 
-	  try {
-	  httppost = new HttpPost(restCall);
-	  authorizationHeader = scheme.authenticate(credentials, httppost);
-	  httppost.addHeader(authorizationHeader);
-	  response = httpclient.execute(httppost);
-	 
-	  if (response != null) {
-	       log.info("Task complete Response status line: "+ response.getStatusLine());
-	       if (response.getStatusLine() != null) {
-	            log.info("Task complete Response status code: "+ response.getStatusLine().getStatusCode());
-	       }
-	  }
-	  } catch (ClientProtocolException ex) {
-	       ex.printStackTrace();
-	  } catch (AuthenticationException ex) {
-	       ex.printStackTrace();
-	  } catch (Exception ex) {
-	       ex.printStackTrace();
-	  } finally {
-	       closeHttpClient();
-	  }
-	  }
-	//==========================================*/
 }

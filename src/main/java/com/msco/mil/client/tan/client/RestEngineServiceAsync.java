@@ -2,7 +2,7 @@ package com.msco.mil.client.tan.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.msco.mil.shared.Deployment;
+import com.msco.mil.shared.MyDeployment;
 
 
 public interface RestEngineServiceAsync {
@@ -11,7 +11,7 @@ public interface RestEngineServiceAsync {
      * 
      * @see com.msco.mil.client.RestEngineService
      */
-    void getDeployments(AsyncCallback<java.util.List<com.msco.mil.shared.Deployment>> callback);
+    void getDeployments(AsyncCallback<java.util.List<com.msco.mil.shared.MyDeployment>> callback);
 
     /**
      * GWT-RPC service asynchronous (client-side) interface
