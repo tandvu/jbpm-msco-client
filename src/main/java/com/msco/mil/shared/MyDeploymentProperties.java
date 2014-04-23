@@ -6,7 +6,7 @@ import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.PropertyAccess;
 import com.msco.mil.shared.Deployment;
 
-public interface DeploymentProperties extends PropertyAccess<Deployment> {
+public interface MyDeploymentProperties extends PropertyAccess<Deployment> {
     @Path("id")
     ModelKeyProvider<Deployment> key();
      

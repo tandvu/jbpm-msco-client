@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.msco.mil.shared.Actor;
 import com.msco.mil.shared.ActorProperties;
 import com.msco.mil.shared.Deployment;
-import com.msco.mil.shared.DeploymentProperties;
+import com.msco.mil.shared.MyDeploymentProperties;
 import com.msco.mil.shared.ProcessDefinition;
 import com.msco.mil.shared.ProcessDefinitionProperties;
 import com.msco.mil.shared.ProcessInstance;
@@ -72,7 +72,7 @@ public class MscoClient implements IsWidget, EntryPoint {
     private Widget widgetTaskSummary;
     private Widget widgetProcessDefinition;
     private Widget widgetActors;
-    private static final DeploymentProperties propsDeployment = GWT.create(DeploymentProperties.class);
+    private static final MyDeploymentProperties propsDeployment = GWT.create(MyDeploymentProperties.class);
     private static final ProcessInstanceProperties propsProcessInstance = GWT.create(ProcessInstanceProperties.class);
     private static final TaskProperties propsTaskSummary = GWT.create(TaskProperties.class);
     private static final ProcessDefinitionProperties propsProcessDefinition = GWT
@@ -197,6 +197,7 @@ public class MscoClient implements IsWidget, EntryPoint {
         l.add(statusCol);
         ColumnModel<Deployment> cm = new ColumnModel<Deployment>(l);
         ListStore<Deployment> store = new ListStore<Deployment>(propsDeployment.key());
+        
         gridDeployments = new Grid<Deployment>(store, cm);
         gridDeployments.getView().setStripeRows(true);
         gridDeployments.getView().setColumnLines(true);
@@ -564,6 +565,7 @@ public class MscoClient implements IsWidget, EntryPoint {
                 }
             }
         });
+        
         greetingService.getProcessInstances(1, new AsyncCallback<List<ProcessInstance>>() {
             public void onFailure(Throwable caught) {
                 Window.alert("Network problem getting Active Process Instances list");

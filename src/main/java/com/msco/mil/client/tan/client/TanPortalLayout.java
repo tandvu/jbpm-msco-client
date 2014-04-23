@@ -1,4 +1,8 @@
-package com.msco.mil.client.sencha.gxt.examples.resources.client;
+package com.msco.mil.client.tan.client;
+
+
+/**
+ package com.msco.mil.client.sencha.gxt.examples.resources.client;
 
 /**
  * Sencha GXT 3.1.0-beta - Sencha for GWT
@@ -13,54 +17,52 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.DateCell;
-import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.msco.mil.client.GreetingService;
+import com.msco.mil.client.sencha.gxt.examples.resources.client.AccordionLayoutExample;
+import com.msco.mil.client.sencha.gxt.examples.resources.client.ExampleStyles;
+import com.msco.mil.client.sencha.gxt.examples.resources.client.TestData;
 import com.msco.mil.client.sencha.gxt.examples.resources.client.model.Friend;
 import com.msco.mil.client.sencha.gxt.examples.resources.client.model.FriendProperties;
 import com.msco.mil.client.sencha.gxt.examples.resources.client.model.Stock;
 import com.msco.mil.client.sencha.gxt.examples.resources.client.model.StockProperties;
+import com.msco.mil.client.tan.client.grid.MyDeploymentGrid;
 import com.msco.mil.shared.Deployment;
 import com.msco.mil.shared.MyDeploymentProperties;
-import com.sencha.gxt.cell.core.client.TextButtonCell;
 import com.sencha.gxt.core.client.dom.Layer;
-import com.sencha.gxt.core.client.dom.Layer.ShadowPosition;
 import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.widget.core.client.ContentPanel;
 //import com.sencha.gxt.explorer.client.model.Example.Detail;
 import com.sencha.gxt.widget.core.client.Portlet;
 import com.sencha.gxt.widget.core.client.button.ToolButton;
 import com.sencha.gxt.widget.core.client.container.PortalLayoutContainer;
-import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
-import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
-import com.sencha.gxt.widget.core.client.info.Info;
 import com.sencha.gxt.widget.core.client.tips.QuickTip;
 
-public class PortalLayoutContainerExample implements IsWidget, EntryPoint {
+public class TanPortalLayout implements IsWidget, EntryPoint {
 
 	private static final FriendProperties friendProps = 
 			GWT.create(FriendProperties.class);
-	private static final StockProperties props = 
+	private static final StockProperties stockProps = 
 			GWT.create(StockProperties.class);
 	private static final MyDeploymentProperties deploymentProps = 
 			GWT.create(MyDeploymentProperties.class);
+	private RestEngineServiceAsync restEngineService =  
+			GWT.create(RestEngineService.class);
 	
 	private Grid<Deployment> deploymentGrid = null;
 
@@ -91,16 +93,16 @@ public class PortalLayoutContainerExample implements IsWidget, EntryPoint {
 			portlet = new Portlet();
 			portlet.setHeadingText("Grid in a Portlet");
 			configPanel(portlet);
-			portlet.add(createGrid());
+			portlet.add(createStockGrid());
 			portlet.setHeight(250);
 			portal.add(portlet, 1);
 			
 			
 			//Add friend porlet
 			portlet = new Portlet();
-			portlet.setHeadingText("Friend Grid in a Portlet");
+			portlet.setHeadingText("Deployment Grid in a Portlet");
 			configPanel(portlet);
-			portlet.add(createFriendGrid());
+			portlet.add(instantiateDeploymentGrid());
 			portlet.setHeight(200);
 			portal.add(portlet, 1);
 
@@ -122,8 +124,102 @@ public class PortalLayoutContainerExample implements IsWidget, EntryPoint {
 			portlet.add(getBogusText());
 			portal.add(portlet, 2);
 		}
+		
+		updateLists();
 		return portal;
 	}
+	
+	public Widget instantiateDeploymentGrid() {
+		// Create columns
+        ColumnConfig<Deployment, String> groupIdCol = new ColumnConfig<Deployment, String>(deploymentProps.groupId(),
+                150, "Group ID");
+        ColumnConfig<Deployment, String> artifactIdCol = new ColumnConfig<Deployment, String>(
+                deploymentProps.artifactId(), 150, "Artifact");
+        ColumnConfig<Deployment, String> versionCol = new ColumnConfig<Deployment, String>(deploymentProps.version(),
+                150, "Version");
+        ColumnConfig<Deployment, String> kbaseNameCol = new ColumnConfig<Deployment, String>(
+                deploymentProps.kbaseName(), 150, "Kie Base Name");
+        ColumnConfig<Deployment, String> ksessionNameCol = new ColumnConfig<Deployment, String>(
+                deploymentProps.ksessionName(), 150, "Kie Session Name");
+        ColumnConfig<Deployment, String> strategyNameCol = new ColumnConfig<Deployment, String>(
+                deploymentProps.strategy(), 150, "Strategy");
+        ColumnConfig<Deployment, String> statusCol = new ColumnConfig<Deployment, String>(deploymentProps.status(),
+                150, "Action");
+        ColumnConfig<Deployment, String> identifierCol = new ColumnConfig<Deployment, String>(
+        		deploymentProps.identifier(), 250, "Deployments");
+
+		// Set kbaseName & ksessionName columns
+        kbaseNameCol.setCell(new AbstractCell<String>() {
+            @Override
+            public void render(com.google.gwt.cell.client.Cell.Context context, String value, SafeHtmlBuilder sb) {
+                if (value.equals("")) {
+                    sb.appendHtmlConstant("<span>" + "DEFAULT" + "</span>");
+                }
+            }
+        });
+        
+        
+        ksessionNameCol.setCell(new AbstractCell<String>() {
+            @Override
+            public void render(com.google.gwt.cell.client.Cell.Context context, String value, SafeHtmlBuilder sb) {
+                if (value.equals("")) {
+                    sb.appendHtmlConstant("<span>" + "DEFAULT" + "</span>");
+                }
+            }
+        });
+
+		// Build Column Model
+        List<ColumnConfig<Deployment, ?>> colList = new ArrayList<ColumnConfig<Deployment, ?>>();
+        colList.add(identifierCol);
+        colList.add(groupIdCol);
+        colList.add(artifactIdCol);
+        colList.add(versionCol);
+        colList.add(kbaseNameCol);
+        colList.add(ksessionNameCol);
+        colList.add(strategyNameCol);
+        colList.add(statusCol);
+        ColumnModel<Deployment> colModel = new ColumnModel<Deployment>(colList);
+		
+		//Generate listStore (data)
+		ListStore<Deployment> listStore = new ListStore<Deployment>(deploymentProps.key());
+//		listStore.addAll(TestData.getFriends());
+		
+		//Build Grid (listStore, columnModel)
+		deploymentGrid = new Grid<Deployment>(listStore, colModel);
+//		grid.getView().setAutoExpandColumn(nameCol);
+		deploymentGrid.setBorders(true);
+		deploymentGrid.getView().setStripeRows(true);
+		deploymentGrid.getView().setColumnLines(true);
+
+		// needed to enable quicktips (qtitle for the heading and qtip for the
+		// content) that are setup in the change GridCellRenderer
+		QuickTip toolTip = new QuickTip(deploymentGrid);
+
+		return deploymentGrid;
+	}
+	
+    public void updateLists() {
+    	System.out.println("TanPortalLayout.updateList");
+        restEngineService.getDeployments(new AsyncCallback<List<Deployment>>() {
+            public void onFailure(Throwable caught) {
+                Window.alert("Network problem getting Deployments list");
+            }
+            
+            public void onSuccess(List<Deployment> deployments) {
+                if (deployments != null) {
+                    if (deployments.size() == 0) {
+                        deploymentGrid.getStore().clear();
+                        return;
+                    }
+                    
+                    if (deploymentGrid != null)
+                    {
+                    	deploymentGrid.getStore().replaceAll(deployments);
+                    }
+                }
+            }
+        });
+    }
 	
 	public Widget createFriendGrid() {
 		// Create columns
@@ -168,24 +264,22 @@ public class PortalLayoutContainerExample implements IsWidget, EntryPoint {
 		// needed to enable quicktips (qtitle for the heading and qtip for the
 		// content) that are setup in the change GridCellRenderer
 		QuickTip toolTip = new QuickTip(grid);
-		
 
-		
 		return grid;
 	}
 
-	public Widget createGrid() {
+	public Widget createStockGrid() {
 		final NumberFormat number = NumberFormat.getFormat("0.00");
 
 		ColumnConfig<Stock, String> nameCol = new ColumnConfig<Stock, String>(
-				props.name(), 200, "Company");
+				stockProps.name(), 200, "Company");
 		ColumnConfig<Stock, String> symbolCol = new ColumnConfig<Stock, String>(
-				props.symbol(), 100, "Symbol");
+				stockProps.symbol(), 100, "Symbol");
 		ColumnConfig<Stock, Double> lastCol = new ColumnConfig<Stock, Double>(
-				props.last(), 75, "Last");
+				stockProps.last(), 75, "Last");
 
 		ColumnConfig<Stock, Double> changeCol = new ColumnConfig<Stock, Double>(
-				props.change(), 100, "Change");
+				stockProps.change(), 100, "Change");
 		changeCol.setCell(new AbstractCell<Double>() {
 
 			@Override
@@ -199,7 +293,7 @@ public class PortalLayoutContainerExample implements IsWidget, EntryPoint {
 		});
 
 		ColumnConfig<Stock, Date> lastTransCol = new ColumnConfig<Stock, Date>(
-				props.lastTrans(), 100, "Last Updated");
+				stockProps.lastTrans(), 100, "Last Updated");
 		lastTransCol.setCell(new DateCell(DateTimeFormat
 				.getFormat("MM/dd/yyyy")));
 
@@ -211,7 +305,7 @@ public class PortalLayoutContainerExample implements IsWidget, EntryPoint {
 		l.add(lastTransCol);
 		ColumnModel<Stock> cm = new ColumnModel<Stock>(l);
 
-		ListStore<Stock> store = new ListStore<Stock>(props.key());
+		ListStore<Stock> store = new ListStore<Stock>(stockProps.key());
 		store.addAll(TestData.getStocks());
 
 		final Grid<Stock> grid = new Grid<Stock>(store, cm);
@@ -228,9 +322,7 @@ public class PortalLayoutContainerExample implements IsWidget, EntryPoint {
 	}
 
 	public void onModuleLoad() {
-		System.out.println("PortalLayoutcontainerExample.onModuleLoad.1");
 		RootPanel.get().add(this);
-		System.out.println("PortalLayoutcontainerExample.onModuleLoad.2");
 	}
 
 	private void configPanel(final Portlet panel) {

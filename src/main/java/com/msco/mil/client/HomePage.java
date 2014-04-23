@@ -1,5 +1,7 @@
 package com.msco.mil.client;
 
+import org.kie.internal.utils.KieHelper;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
@@ -12,6 +14,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.msco.mil.client.sencha.gxt.examples.resources.client.AccordionLayoutExample;
 import com.msco.mil.client.sencha.gxt.examples.resources.client.PortalLayoutContainerExample;
+import com.msco.mil.client.tan.client.TanPortalLayout;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -36,7 +39,8 @@ public class HomePage implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		RootPanel.get().add(new AccordionLayoutExample());
+		RootPanel.get().add(new TanPortalLayout());
+//		RootPanel.get().add(new AccordionLayoutExample());
 	}
 
 	public class MainGUI extends Composite {

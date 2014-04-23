@@ -4,6 +4,6 @@
   <inherits name='com.msco.mil.MscoClient' />
 
   <!-- Specify the path to any remote services.                   -->
-  <servlet path="/MscoClient/greet" class="com.msco.mil.server.GreetingServiceImpl" />
+  <!-- <servlet path="/MscoClient/greet" class="com.msco.mil.server.GreetingServiceImpl" /> -->
 
 </module>

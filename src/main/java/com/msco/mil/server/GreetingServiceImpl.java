@@ -58,7 +58,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
     // private static final Logger logger =
     // LoggerFactory.getLogger(GreetingServiceImpl.class);
     public GreetingServiceImpl() {
-        System.out.println("hello");
+        System.out.println("GreetingServiceImpl====================");
         Actor actor = new Actor();
         actor.setName("krisv");
         actor.setColor("black");
@@ -76,7 +76,6 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
                         processDeploymentList();
                         processProcessInstanceList();
                         processTaskList();
-                        
                         
                         Thread.sleep(5000);
                     }

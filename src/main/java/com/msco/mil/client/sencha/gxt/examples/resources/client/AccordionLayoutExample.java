@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.IconProvider;
 import com.sencha.gxt.data.shared.TreeStore;
@@ -34,20 +35,31 @@ public class AccordionLayoutExample implements IsWidget, EntryPoint {
   public Widget asWidget() {
     if (panel == null) {
       panel = new ContentPanel();
+//      panel.setAllowTextSelection(false);
+      panel.setBodyBorder(false);
+      panel.setBorders(true);
+      panel.setTitleCollapse(false);
       panel.setHeadingText("AccordionLayout");
       panel.setBodyBorder(false);
-      panel.setPixelSize(200, 325);
+      panel.setAnimationDuration(5000);
+      
+      panel.setPixelSize(200, 600);
       panel.addStyleName("margin-10");
       panel.getHeader().setIcon(ExampleImages.INSTANCE.accordion());
+      
  
       AccordionLayoutContainer con = new AccordionLayoutContainer();
-      con.setExpandMode(ExpandMode.SINGLE_FILL);
+      con.setExpandMode(ExpandMode.SINGLE_FILL); //one item open at a time, fill the height of the panel
+//      con.setExpandMode(ExpandMode.MULTI); //all items are open
+//      con.setExpandMode(ExpandMode.SINGLE); //one item opens at a time and only fill up to the height of the item
       panel.add(con);
  
       AccordionLayoutAppearance appearance = GWT.<AccordionLayoutAppearance> create(AccordionLayoutAppearance.class);
  
       ContentPanel cp = new ContentPanel(appearance);
-      cp.setAnimCollapse(false);
+      cp.setTitleCollapse(false);
+      cp.setAnimCollapse(true);
+      cp.setAnimationDuration(20000);
       cp.setHeadingText("Online Users");
       con.add(cp);
       con.setActiveWidget(cp);
@@ -69,6 +81,7 @@ public class AccordionLayoutExample implements IsWidget, EntryPoint {
             }
           });
  
+      
       tree.setIconProvider(new IconProvider<NameImageModel>() {
         public ImageResource getIcon(NameImageModel model) {
           if (null == model.getImage()) {
@@ -107,9 +120,13 @@ public class AccordionLayoutExample implements IsWidget, EntryPoint {
       cp.add(tree);
  
       cp = new ContentPanel(appearance);
-      cp.setAnimCollapse(false);
+      cp.setTitleCollapse(false);
+      cp.setAnimCollapse(true);
+      cp.setAnimationDuration(5000);
+//      cp.setEnabled(false);
       cp.setBodyStyleName("pad-text");
       cp.setHeadingText("Settings");
+      cp.setHideMode(Style.HideMode.VISIBILITY);
       cp.add(new Label(TestData.DUMMY_TEXT_SHORT));
       con.add(cp);
  
