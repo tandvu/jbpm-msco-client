@@ -18,8 +18,8 @@
   <inherits name='com.sencha.gxt.ui.GXT' /> 
   
   <!-- Specify the app entry point class.                         -->
-<!--    <entry-point class='com.msco.mil.client.HomePage' />  -->
-  <entry-point class='com.msco.mil.client.MscoClient'    />
+   <entry-point class='com.msco.mil.client.HomePage' /> 
+<!--   <entry-point class='com.msco.mil.client.MscoClient'    /> -->
   <!-- <entry-point class='tan.client.PortalLayoutContainerExample' /> --> 
   
   <!-- GXT Stylesheet -->

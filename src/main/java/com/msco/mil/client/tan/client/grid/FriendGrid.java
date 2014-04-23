@@ -6,9 +6,10 @@ import java.util.List;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.msco.mil.client.tan.client.util.MscoClientDefines;
 import com.msco.mil.shared.Friend;
 import com.msco.mil.shared.FriendProperties;
+import com.msco.mil.shared.MscoDefines;
+import com.msco.mil.shared.MscoUtils;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
@@ -50,7 +51,7 @@ public class FriendGrid extends ContentPanel {
 
 		// Generate listStore (data)
 		ListStore<Friend> listStore = new ListStore<Friend>(friendProps.key());
-		listStore.addAll(MscoClientDefines.getFriends());
+		listStore.addAll(MscoDefines.getFriends());
 
 		// Build Grid (listStore, columnModel)
 		final Grid<Friend> grid = new Grid<Friend>(listStore, colModel);

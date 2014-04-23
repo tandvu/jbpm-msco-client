@@ -20,7 +20,8 @@ import org.jboss.resteasy.client.ClientResponse;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.msco.mil.client.tan.client.RestEngineService;
-import com.msco.mil.client.tan.client.util.MscoClientDefines;
+import com.msco.mil.shared.MscoDefines;
+import com.msco.mil.shared.MscoUtils;
 import com.msco.mil.shared.MyDeployment;
 
 
@@ -44,7 +45,7 @@ public class RestEngineServiceImpl extends RemoteServiceServlet implements RestE
                         processTaskList();
                         */
                     	
-                        Thread.sleep(MscoClientDefines.REFRESH_RATE);
+                        Thread.sleep(MscoDefines.REFRESH_RATE);
                     }
                     catch (InterruptedException e) {
                         e.printStackTrace();
@@ -63,7 +64,7 @@ public class RestEngineServiceImpl extends RemoteServiceServlet implements RestE
     	
 		try {			
 			//create client response in json
-			ClientResponse<String> response = MscoClientDefines
+			ClientResponse<String> response = MscoUtils
 					.getGetClientResponseInJason(restUrl);
 
 			//build deployment list from json response
@@ -89,9 +90,9 @@ public class RestEngineServiceImpl extends RemoteServiceServlet implements RestE
     }
 
     public List<MyDeployment> getDeployments() throws IllegalArgumentException {
-		String restDeploymentUrl = MscoClientDefines.getDeploymentUrl();
-		String jsonResponseStr = getJsonResponseStr(restDeploymentUrl);
-		
+		String restDeploymentUrl = MscoUtils.getRestUrlStr(MscoDefines.DEPLOYMENT_REST_URL);
+		System.out.println("restEngineServiceImpl.restDeploymentUrl: " + restDeploymentUrl);
+		String jsonResponseStr = getJsonResponseStr(restDeploymentUrl);	
     	JSONArray deploymentArray = (JSONArray) JSONSerializer
 				.toJSON(jsonResponseStr);
 			

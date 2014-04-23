@@ -41,11 +41,13 @@ public class PortalLayoutPage implements IsWidget, EntryPoint {
 	private RestEngineServiceAsync restEngineService =  
 			GWT.create(RestEngineService.class);
 	
-	private Grid<MyDeployment> deploymentGrid = null;
+	private MyDeploymentGrid myDeploymentGrid = null;
+	
 
 	private PortalLayoutContainer portal;
 
 	public Widget asWidget() {
+		System.out.println("PortalLayoutPage.asWidget()");
 		if (portal == null) {
 			portal = new PortalLayoutContainer(3);
 			portal.getElement().getStyle().setBackgroundColor("white");
@@ -71,7 +73,7 @@ public class PortalLayoutPage implements IsWidget, EntryPoint {
 			portlet = new Portlet();
 			portlet.setHeadingText("Deployments");
 			configPanel(portlet);
-			MyDeploymentGrid myDeploymentGrid = new MyDeploymentGrid();
+			myDeploymentGrid = new MyDeploymentGrid();
 			portlet.add(myDeploymentGrid);
 			portlet.setHeight(200);
 			portal.add(portlet, 1);
@@ -106,17 +108,7 @@ public class PortalLayoutPage implements IsWidget, EntryPoint {
             }
             
             public void onSuccess(List<MyDeployment> deployments) {
-                if (deployments != null) {
-                    if (deployments.size() == 0) {
-                        deploymentGrid.getStore().clear();
-                        return;
-                    }
-                    
-                    if (deploymentGrid != null)
-                    {
-                    	deploymentGrid.getStore().replaceAll(deployments);
-                    }
-                }
+            	myDeploymentGrid.updateGrid(deployments);
             }
         });
     }

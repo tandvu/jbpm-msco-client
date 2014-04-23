@@ -19,7 +19,7 @@ public class MyDeploymentGrid extends ContentPanel {
 			.create(MyDeploymentProperties.class);
 	private Grid<MyDeployment> myDeploymentGrid;
 
-	public MyDeploymentGrid() {        
+	public MyDeploymentGrid() {
 		// Create columns
 		ColumnConfig<MyDeployment, String> groupIdCol = new ColumnConfig<MyDeployment, String>(
 				myDeploymentProps.groupId(), 150, "Group ID");
@@ -72,19 +72,28 @@ public class MyDeploymentGrid extends ContentPanel {
 		ColumnModel<MyDeployment> colModel = new ColumnModel<MyDeployment>(
 				colList);
 
-		// Generate listStore (data)
 		ListStore<MyDeployment> listStore = new ListStore<MyDeployment>(
 				myDeploymentProps.key());
-		// listStore.addAll(TestData.getFriends());
-
-		// Build Grid (listStore, columnModel)
 
 		myDeploymentGrid = new Grid<MyDeployment>(listStore, colModel);
-		// grid.getView().setAutoExpandColumn(nameCol);
 		myDeploymentGrid.setBorders(true);
 		myDeploymentGrid.getView().setStripeRows(true);
 		myDeploymentGrid.getView().setColumnLines(true);
 		this.add(myDeploymentGrid);
 		this.setHeaderVisible(false);
 	}
+
+	public void updateGrid(List<MyDeployment> deployments) {
+		if (deployments != null) {
+			if (deployments.size() == 0) {
+				myDeploymentGrid.getStore().clear();
+				return;
+			}
+
+			if (myDeploymentGrid != null) {
+				myDeploymentGrid.getStore().replaceAll(deployments);
+			}
+		}
+	}
+
 }

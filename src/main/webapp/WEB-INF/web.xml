@@ -8,7 +8,8 @@
   <!-- Servlets -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
-    <servlet-class>com.msco.mil.server.GreetingServiceImpl</servlet-class>
+<!--     <servlet-class>com.msco.mil.server.GreetingServiceImpl</servlet-class> -->
+    <servlet-class>com.msco.mil.server.RestEngineServiceImpl</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
 

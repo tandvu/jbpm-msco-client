@@ -30,6 +30,7 @@ public class HomePage implements IsWidget, EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		System.err.println("HomePage.onModuleLoad()");
 		RootPanel.get().add(new PortalLayoutPage());
 	}
 
