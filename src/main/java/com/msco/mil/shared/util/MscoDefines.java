@@ -1,9 +1,19 @@
-package com.msco.mil.shared;
+package com.msco.mil.shared.util;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.jboss.resteasy.client.ClientRequest;
+import org.jboss.resteasy.client.ClientRequestFactory;
+import org.jboss.resteasy.client.ClientResponse;
+import org.kie.services.client.api.RestRequestHelper;
+
+import com.msco.mil.shared.Authorization;
+import com.msco.mil.shared.Friend;
+import com.msco.mil.shared.Stock;
 import com.sencha.gxt.core.client.util.DateWrapper;
 
 public class MscoDefines {
@@ -11,6 +21,15 @@ public class MscoDefines {
 	public static String SERVER = "http://localhost:8080/";
 	public static String JBPM_CONSOLE = "jbpm-console/";
 	public static String DEPLOYMENT_REST_URL = "rest/deployment";
+	public static int COMPLETED_INSTANCE = 2;
+	public static int ACTIVE_INSTANCE = 1;
+	
+	public static String getProcessInstanceRestUrl(String deploymentId)
+	{
+		return SERVER + JBPM_CONSOLE + "rest/runtime/" + deploymentId + "/history/instances";
+	}
+	
+	
 
 	public static List<Stock> getStocks() {
 		List<Stock> stocks = new ArrayList<Stock>();

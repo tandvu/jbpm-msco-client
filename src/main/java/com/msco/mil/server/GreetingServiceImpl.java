@@ -267,7 +267,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
         }
     }
     
-    public void getProcessInstanceList(String deploymentId) throws Exception {
+    /*public void getProcessInstanceList(String deploymentId) throws Exception {
         URL deploymentUrl = new URL("http://localhost:8080/jbpm-console/");
         String userId = "krisv";
         String password = "krisv";
@@ -294,7 +294,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
         }
         catch (SocketTimeoutException e) {
         }
-    }
+    } */
     
     public void processDeploymentList() throws Exception {
         URL deploymentUrl = new URL("http://localhost:8080/jbpm-console/");

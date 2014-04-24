@@ -6,6 +6,10 @@ import java.util.List;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.msco.mil.client.tan.client.RestEngineService;
+import com.msco.mil.client.tan.client.RestEngineServiceAsync;
 import com.msco.mil.shared.MyDeployment;
 import com.msco.mil.shared.MyDeploymentProperties;
 import com.sencha.gxt.data.shared.ListStore;
@@ -15,28 +19,30 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
 public class MyDeploymentGrid extends ContentPanel {
-	private static final MyDeploymentProperties myDeploymentProps = GWT
+	private static final MyDeploymentProperties props = GWT
 			.create(MyDeploymentProperties.class);
-	private Grid<MyDeployment> myDeploymentGrid;
+	private RestEngineServiceAsync restEngineService =  
+			GWT.create(RestEngineService.class);
+	private Grid<MyDeployment> grid;
 
 	public MyDeploymentGrid() {
 		// Create columns
 		ColumnConfig<MyDeployment, String> groupIdCol = new ColumnConfig<MyDeployment, String>(
-				myDeploymentProps.groupId(), 150, "Group ID");
+				props.groupId(), 150, "Group ID");
 		ColumnConfig<MyDeployment, String> artifactIdCol = new ColumnConfig<MyDeployment, String>(
-				myDeploymentProps.artifactId(), 150, "Artifact");
+				props.artifactId(), 150, "Artifact");
 		ColumnConfig<MyDeployment, String> versionCol = new ColumnConfig<MyDeployment, String>(
-				myDeploymentProps.version(), 150, "Version");
+				props.version(), 150, "Version");
 		ColumnConfig<MyDeployment, String> kbaseNameCol = new ColumnConfig<MyDeployment, String>(
-				myDeploymentProps.kbaseName(), 150, "Kie Base Name");
+				props.kbaseName(), 150, "Kie Base Name");
 		ColumnConfig<MyDeployment, String> ksessionNameCol = new ColumnConfig<MyDeployment, String>(
-				myDeploymentProps.ksessionName(), 150, "Kie Session Name");
+				props.ksessionName(), 150, "Kie Session Name");
 		ColumnConfig<MyDeployment, String> strategyNameCol = new ColumnConfig<MyDeployment, String>(
-				myDeploymentProps.strategy(), 150, "Strategy");
+				props.strategy(), 150, "Strategy");
 		ColumnConfig<MyDeployment, String> statusCol = new ColumnConfig<MyDeployment, String>(
-				myDeploymentProps.status(), 150, "Action");
+				props.status(), 150, "Action");
 		ColumnConfig<MyDeployment, String> identifierCol = new ColumnConfig<MyDeployment, String>(
-				myDeploymentProps.identifier(), 250, "MyDeployments");
+				props.identifier(), 250, "MyDeployments");
 
 		// Set kbaseName & ksessionName columns
 		kbaseNameCol.setCell(new AbstractCell<String>() {
@@ -73,27 +79,26 @@ public class MyDeploymentGrid extends ContentPanel {
 				colList);
 
 		ListStore<MyDeployment> listStore = new ListStore<MyDeployment>(
-				myDeploymentProps.key());
+				props.key());
 
-		myDeploymentGrid = new Grid<MyDeployment>(listStore, colModel);
-		myDeploymentGrid.setBorders(true);
-		myDeploymentGrid.getView().setStripeRows(true);
-		myDeploymentGrid.getView().setColumnLines(true);
-		this.add(myDeploymentGrid);
+		grid = new Grid<MyDeployment>(listStore, colModel);
+		grid.setBorders(true);
+		grid.getView().setStripeRows(true);
+		grid.getView().setColumnLines(true);
+		this.add(grid);
 		this.setHeaderVisible(false);
 	}
-
-	public void updateGrid(List<MyDeployment> deployments) {
-		if (deployments != null) {
-			if (deployments.size() == 0) {
-				myDeploymentGrid.getStore().clear();
-				return;
-			}
-
-			if (myDeploymentGrid != null) {
-				myDeploymentGrid.getStore().replaceAll(deployments);
-			}
-		}
-	}
-
+	
+    public void updateGrid()
+    {
+        restEngineService.getDeployments(new AsyncCallback<List<MyDeployment>>() {
+            public void onFailure(Throwable caught) {
+                Window.alert("Network problem getting Deployments list.  Make sure jBPM is running.");
+            }
+            
+            public void onSuccess(List<MyDeployment> deployments) {
+            	grid.getStore().replaceAll(deployments);
+            }
+        });
+    }  
 }

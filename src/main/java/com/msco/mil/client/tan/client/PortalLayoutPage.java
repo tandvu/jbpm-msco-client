@@ -22,17 +22,19 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.msco.mil.client.tan.client.grid.MyDeploymentGrid;
+import com.msco.mil.client.tan.client.grid.ProcessInstanceGrid;
 import com.msco.mil.client.tan.client.grid.StockGrid;
 import com.msco.mil.client.tan.client.grid.TextGrid;
 import com.msco.mil.shared.MyDeployment;
 import com.msco.mil.shared.MyDeploymentProperties;
+import com.msco.mil.shared.ProcessInstance;
+import com.msco.mil.shared.util.MscoDefines;
 //import com.sencha.gxt.explorer.client.model.Example.Detail;
 import com.sencha.gxt.widget.core.client.Portlet;
 import com.sencha.gxt.widget.core.client.button.ToolButton;
 import com.sencha.gxt.widget.core.client.container.PortalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
-import com.sencha.gxt.widget.core.client.grid.Grid;
 
 public class PortalLayoutPage implements IsWidget, EntryPoint {
 
@@ -42,6 +44,7 @@ public class PortalLayoutPage implements IsWidget, EntryPoint {
 			GWT.create(RestEngineService.class);
 	
 	private MyDeploymentGrid myDeploymentGrid = null;
+	private ProcessInstanceGrid processInstanceGrid = null;
 	
 
 	private PortalLayoutContainer portal;
@@ -69,12 +72,21 @@ public class PortalLayoutPage implements IsWidget, EntryPoint {
 			portlet.setHeight(250);
 			portal.add(portlet, 1);
 			
-			//Add friend porlet
+			//Add deployment porlet
 			portlet = new Portlet();
 			portlet.setHeadingText("Deployments");
 			configPanel(portlet);
 			myDeploymentGrid = new MyDeploymentGrid();
 			portlet.add(myDeploymentGrid);
+			portlet.setHeight(200);
+			portal.add(portlet, 1);
+			
+			//Add processInstance porlet
+			portlet = new Portlet();
+			portlet.setHeadingText("Process Instances");
+			configPanel(portlet);
+			processInstanceGrid = new ProcessInstanceGrid();
+			portlet.add(processInstanceGrid);
 			portlet.setHeight(200);
 			portal.add(portlet, 1);
 			
@@ -97,21 +109,25 @@ public class PortalLayoutPage implements IsWidget, EntryPoint {
 			portal.add(portlet, 2);
 		}
 		
-		updateLists();
+		instantiateGrid();
 		return portal;
 	}
 		
-    public void updateLists() {
-        restEngineService.getDeployments(new AsyncCallback<List<MyDeployment>>() {
-            public void onFailure(Throwable caught) {
-                Window.alert("Network problem getting Deployments list.  Make sure jBPM is running.");
-            }
-            
-            public void onSuccess(List<MyDeployment> deployments) {
-            	myDeploymentGrid.updateGrid(deployments);
-            }
-        });
+    private void instantiateGrid() {
+    	myDeploymentGrid.updateGrid();
+    	
+    	//This is to give time for the deployment list finishes so Process Instance list can be built
+    	try {
+			Thread.sleep(MscoDefines.REFRESH_RATE);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	processInstanceGrid.updateGrid(MscoDefines.ACTIVE_INSTANCE);
     }
+    
+
+    
 
 	public void onModuleLoad() {
 		RootPanel.get().add(this);

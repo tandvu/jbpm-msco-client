@@ -15,4 +15,5 @@ import com.msco.mil.shared.Task;
 @RemoteServiceRelativePath("greet")
 public interface RestEngineService extends RemoteService {
     public List<MyDeployment> getDeployments() throws IllegalArgumentException;
+    public List<ProcessInstance> getProcessInstances(Integer status) throws IllegalArgumentException;
 }
