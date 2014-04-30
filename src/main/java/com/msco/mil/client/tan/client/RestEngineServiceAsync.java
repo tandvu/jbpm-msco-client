@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.msco.mil.shared.MyDeployment;
-import com.msco.mil.shared.ProcessInstance;
+import com.msco.mil.shared.MyProcessInstance;
 
 
 public interface RestEngineServiceAsync {
@@ -15,7 +15,7 @@ public interface RestEngineServiceAsync {
      * @see com.msco.mil.client.RestEngineService
      */
     void getDeployments(AsyncCallback<List<MyDeployment>> callback);
-    void getProcessInstances(Integer status, AsyncCallback<List<ProcessInstance>> callback);
+    void getProcessInstances(Integer status, AsyncCallback<List<MyProcessInstance>> callback);
 
     /**
      * GWT-RPC service asynchronous (client-side) interface

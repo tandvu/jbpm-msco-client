@@ -35,7 +35,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.msco.mil.client.GreetingService;
 import com.msco.mil.shared.Actor;
 import com.msco.mil.shared.MyDeployment;
-import com.msco.mil.shared.ProcessInstance;
+import com.msco.mil.shared.MyProcessInstance;
 import com.msco.mil.shared.Task;
 
 
@@ -45,8 +45,8 @@ import com.msco.mil.shared.Task;
 @SuppressWarnings("serial")
 public class GreetingServiceImpl extends RemoteServiceServlet implements GreetingService {
     private List<MyDeployment> deploymentList = new ArrayList<MyDeployment>();
-    private List<ProcessInstance> activeProcessInstanceList = new ArrayList<ProcessInstance>();
-    private List<ProcessInstance> completedProcessInstanceList = new ArrayList<ProcessInstance>();
+    private List<MyProcessInstance> activeProcessInstanceList = new ArrayList<MyProcessInstance>();
+    private List<MyProcessInstance> completedProcessInstanceList = new ArrayList<MyProcessInstance>();
     private List<Task> taskList = new ArrayList<Task>();
     private List<Actor> actorList = new ArrayList<Actor>();
     JSONArray currentDeploymentArray = new JSONArray();
@@ -145,7 +145,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
     public void processTaskList() throws Exception {
         taskList.clear();
         synchronized (taskList) {
-            for (ProcessInstance pi : activeProcessInstanceList) {
+            for (MyProcessInstance pi : activeProcessInstanceList) {
                 String initiator = pi.getInitiator();
                 URL deploymentUrl = new URL("http://localhost:8080/jbpm-console/");
                 ClientRequestFactory requestFactory;
@@ -174,7 +174,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
                             User user = s.getActualOwner();
                             task.setOwner(user.getId());
                             Long instanceId = s.getProcessInstanceId();
-                            for (ProcessInstance p : activeProcessInstanceList) {
+                            for (MyProcessInstance p : activeProcessInstanceList) {
                                 if (p.getId() == instanceId.intValue()) {
                                     task.setParentName(p.getName());
                                     task.setDeployment(p.getExternalId());
@@ -222,7 +222,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
                         BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(
                                 ((String) response.getEntity()).getBytes())));
                         // System.out.println("br:" + br.readLine());
-                        ProcessInstance processInstance = null;
+                        MyProcessInstance processInstance = null;
                         String str = br.readLine();
                         str = str.substring(18, str.length() - 1);
                         // System.out.println("new br:" + str);
@@ -231,7 +231,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
                             for (Object js : processInstanceArray) {
                                 JSONObject json = (JSONObject) js;
                                 System.out.println(json.toString());
-                                processInstance = new ProcessInstance();
+                                processInstance = new MyProcessInstance();
                                 Integer id = (Integer) json.get("id");
                                 Long idLong = id.longValue();
                                 processInstance.setId(idLong);
@@ -387,7 +387,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements Greetin
         return "Successfuly undeployed.";
     }
     
-    public List<ProcessInstance> getProcessInstances(Integer request) throws IllegalArgumentException {
+    public List<MyProcessInstance> getProcessInstances(Integer request) throws IllegalArgumentException {
         if (request == 1) {
             return activeProcessInstanceList;
         }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 
-public class ProcessInstance implements Serializable {
+public class MyProcessInstance implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer key;
     private Long id;
@@ -17,7 +17,7 @@ public class ProcessInstance implements Serializable {
     private Date date = new Date();
     private static int COUNTER = 0;
     
-    public ProcessInstance() {
+    public MyProcessInstance() {
         this.key = Integer.valueOf(COUNTER++);
     }
     

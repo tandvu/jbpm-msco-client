@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.msco.mil.client.tan.client.JsonGridExample;
 import com.msco.mil.client.tan.client.PortalLayoutPage;
 
 /**
@@ -30,8 +31,9 @@ public class HomePage implements IsWidget, EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		System.err.println("HomePage.onModuleLoad()");
-		RootPanel.get().add(new PortalLayoutPage());
+		System.out.println("HomePage.onModuleLoad()");
+//		RootPanel.get().add(new PortalLayoutPage());
+		RootPanel.get().add(new JsonGridExample());
 	}
 
 	public Widget asWidget() {

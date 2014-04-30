@@ -10,8 +10,8 @@ import com.msco.mil.shared.MyDeployment;
 import com.msco.mil.shared.MyDeploymentProperties;
 import com.msco.mil.shared.ProcessDefinition;
 import com.msco.mil.shared.ProcessDefinitionProperties;
-import com.msco.mil.shared.ProcessInstance;
-import com.msco.mil.shared.ProcessInstanceProperties;
+import com.msco.mil.shared.MyProcessInstance;
+import com.msco.mil.shared.MyProcessInstanceProperties;
 import com.msco.mil.shared.Task;
 import com.msco.mil.shared.TaskProperties;
 import com.sencha.gxt.cell.core.client.TextButtonCell;
@@ -73,18 +73,18 @@ public class MscoClient implements IsWidget, EntryPoint {
     private Widget widgetProcessDefinition;
     private Widget widgetActors;
     private static final MyDeploymentProperties propsDeployment = GWT.create(MyDeploymentProperties.class);
-    private static final ProcessInstanceProperties propsProcessInstance = GWT.create(ProcessInstanceProperties.class);
+    private static final MyProcessInstanceProperties propsProcessInstance = GWT.create(MyProcessInstanceProperties.class);
     private static final TaskProperties propsTaskSummary = GWT.create(TaskProperties.class);
     private static final ProcessDefinitionProperties propsProcessDefinition = GWT
             .create(ProcessDefinitionProperties.class);
     private static final ActorProperties propsActor = GWT.create(ActorProperties.class);
-    private Grid<ProcessInstance> gridProcessInstance = null;
+    private Grid<MyProcessInstance> gridProcessInstance = null;
     private Grid<MyDeployment> gridDeployments = null;
     private Grid<Task> gridTaskSummary = null;
     private Grid<ProcessDefinition> gridProcessDefinition = null;
     private Grid<Actor> gridActor = null;
-    private List<ProcessInstance> activeProcessInstanceList = new ArrayList<ProcessInstance>();
-    private List<ProcessInstance> completedProcessInstanceList = new ArrayList<ProcessInstance>();
+    private List<MyProcessInstance> activeProcessInstanceList = new ArrayList<MyProcessInstance>();
+    private List<MyProcessInstance> completedProcessInstanceList = new ArrayList<MyProcessInstance>();
     private List<Task> taskList = new ArrayList<Task>();
     private List<ProcessDefinition> processDefinitionList = new ArrayList<ProcessDefinition>();
     private List<Actor> actorList = new ArrayList<Actor>();
@@ -191,21 +191,21 @@ public class MscoClient implements IsWidget, EntryPoint {
         contentPanel.addStyleName("margin-10");
         VerticalLayoutContainer con = new VerticalLayoutContainer();
         contentPanel.setWidget(con);
-        ColumnConfig<ProcessInstance, Long> idCol = new ColumnConfig<ProcessInstance, Long>(
+        ColumnConfig<MyProcessInstance, Long> idCol = new ColumnConfig<MyProcessInstance, Long>(
                 propsProcessInstance.id(), 30, "Id");
-        ColumnConfig<ProcessInstance, String> nameCol = new ColumnConfig<ProcessInstance, String>(
+        ColumnConfig<MyProcessInstance, String> nameCol = new ColumnConfig<MyProcessInstance, String>(
                 propsProcessInstance.name(), 100, "Name");
-        ColumnConfig<ProcessInstance, String> externalIdCol = new ColumnConfig<ProcessInstance, String>(
+        ColumnConfig<MyProcessInstance, String> externalIdCol = new ColumnConfig<MyProcessInstance, String>(
                 propsProcessInstance.externalId(), 220, "Deployment");
-        ColumnConfig<ProcessInstance, String> initiatorCol = new ColumnConfig<ProcessInstance, String>(
+        ColumnConfig<MyProcessInstance, String> initiatorCol = new ColumnConfig<MyProcessInstance, String>(
                 propsProcessInstance.initiator(), 50, "Initiator");
-        ColumnConfig<ProcessInstance, String> versionCol = new ColumnConfig<ProcessInstance, String>(
+        ColumnConfig<MyProcessInstance, String> versionCol = new ColumnConfig<MyProcessInstance, String>(
                 propsProcessInstance.version(), 50, "Version");
         
-        ColumnConfig<ProcessInstance, String> stateCol = new ColumnConfig<ProcessInstance, String>(
+        ColumnConfig<MyProcessInstance, String> stateCol = new ColumnConfig<MyProcessInstance, String>(
                 propsProcessInstance.state(), 80, "State");
         
-        ColumnConfig<ProcessInstance, Date> dateCol = new ColumnConfig<ProcessInstance, Date>(
+        ColumnConfig<MyProcessInstance, Date> dateCol = new ColumnConfig<MyProcessInstance, Date>(
                 propsProcessInstance.date(), 150, "Start Date");
         dateCol.setCell(new DateCell(DateTimeFormat.getFormat("dd/MM/yyyy kk:mm")));
         initiatorCol.setCell(new AbstractCell<String>() {
@@ -221,7 +221,7 @@ public class MscoClient implements IsWidget, EntryPoint {
                 sb.appendHtmlConstant("<span " + style + ">" + value + "</span>");
             }
         });
-        List<ColumnConfig<ProcessInstance, ?>> l = new ArrayList<ColumnConfig<ProcessInstance, ?>>();
+        List<ColumnConfig<MyProcessInstance, ?>> l = new ArrayList<ColumnConfig<MyProcessInstance, ?>>();
         l.add(idCol);
         l.add(nameCol);
         l.add(externalIdCol);
@@ -229,9 +229,9 @@ public class MscoClient implements IsWidget, EntryPoint {
         l.add(versionCol);
         l.add(stateCol);
         l.add(dateCol);
-        ColumnModel<ProcessInstance> cm = new ColumnModel<ProcessInstance>(l);
-        ListStore<ProcessInstance> store = new ListStore<ProcessInstance>(propsProcessInstance.key());
-        gridProcessInstance = new Grid<ProcessInstance>(store, cm);
+        ColumnModel<MyProcessInstance> cm = new ColumnModel<MyProcessInstance>(l);
+        ListStore<MyProcessInstance> store = new ListStore<MyProcessInstance>(propsProcessInstance.key());
+        gridProcessInstance = new Grid<MyProcessInstance>(store, cm);
         gridProcessInstance.getView().setStripeRows(true);
         gridProcessInstance.getView().setColumnLines(true);
         gridProcessInstance.setBorders(false);
@@ -526,12 +526,12 @@ public class MscoClient implements IsWidget, EntryPoint {
                 }
             }
         });
-        greetingService.getProcessInstances(1, new AsyncCallback<List<ProcessInstance>>() {
+        greetingService.getProcessInstances(1, new AsyncCallback<List<MyProcessInstance>>() {
             public void onFailure(Throwable caught) {
                 Window.alert("Network problem getting Active Process Instances list");
             }
             
-            public void onSuccess(List<ProcessInstance> processInstances) {
+            public void onSuccess(List<MyProcessInstance> processInstances) {
                 if (processInstances != null) {
                     if (processInstances.size() == 0) {
                         if (currentProcessInstanceGrid == 0) {
@@ -546,12 +546,12 @@ public class MscoClient implements IsWidget, EntryPoint {
                 }
             }
         });
-        greetingService.getProcessInstances(2, new AsyncCallback<List<ProcessInstance>>() {
+        greetingService.getProcessInstances(2, new AsyncCallback<List<MyProcessInstance>>() {
             public void onFailure(Throwable caught) {
                 Window.alert("Network problem getting Completed Process Instances list");
             }
             
-            public void onSuccess(List<ProcessInstance> processInstances) {
+            public void onSuccess(List<MyProcessInstance> processInstances) {
                 if (processInstances != null) {
                     if (processInstances.size() == 0) {
                         if (currentProcessInstanceGrid == 1) {

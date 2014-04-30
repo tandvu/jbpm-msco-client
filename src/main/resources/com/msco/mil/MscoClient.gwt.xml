@@ -16,9 +16,12 @@
 
   <!-- Other module inherits                                      -->
   <inherits name='com.sencha.gxt.ui.GXT' /> 
+<!--   <inherits name="com.sencha.gxt.examples.resources.Resources" /> -->
+<!--   <inherits name="com.sencha.gxt.explorer.Explorer" /> -->
   
   <!-- Specify the app entry point class.                         -->
    <entry-point class='com.msco.mil.client.HomePage' /> 
+<!-- <entry-point class='com.sencha.gxt.explorer.client.layout.BorderLayoutExample'/> -->
 <!--   <entry-point class='com.msco.mil.client.MscoClient'    /> -->
   <!-- <entry-point class='tan.client.PortalLayoutContainerExample' /> --> 
   
@@ -28,5 +31,6 @@
   <!-- Specify the paths for translatable code                    -->
   <source path='client' />
   <source path='shared' />
+  <source path='client.tan.client' />
 
 </module>

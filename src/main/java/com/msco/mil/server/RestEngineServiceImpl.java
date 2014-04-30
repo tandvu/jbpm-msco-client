@@ -1,12 +1,5 @@
 package com.msco.mil.server;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,17 +9,11 @@ import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
-import org.apache.http.conn.HttpHostConnectException;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientRequestFactory;
-import org.jboss.resteasy.client.ClientResponse;
-import org.kie.services.client.api.RestRequestHelper;
-
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.msco.mil.client.tan.client.RestEngineService;
 import com.msco.mil.server.util.MscoServerUtils;
 import com.msco.mil.shared.MyDeployment;
-import com.msco.mil.shared.ProcessInstance;
+import com.msco.mil.shared.MyProcessInstance;
 import com.msco.mil.shared.util.MscoDefines;
 
 @SuppressWarnings("serial")
@@ -35,8 +22,9 @@ public class RestEngineServiceImpl extends RemoteServiceServlet implements
 	private JSONArray currentDeploymentArray = new JSONArray();
 	private List<MyDeployment> deploymentList = new ArrayList<MyDeployment>();
 
-	private List<ProcessInstance> activeProcessInstanceList = new ArrayList<ProcessInstance>();
-	private List<ProcessInstance> completedProcessInstanceList = new ArrayList<ProcessInstance>();
+	private List<MyProcessInstance> activeProcessInstanceList = new ArrayList<MyProcessInstance>();
+	private List<MyProcessInstance> completedProcessInstanceList = new ArrayList<MyProcessInstance>();
+	
 
 	public RestEngineServiceImpl() {
 		System.out
@@ -64,40 +52,10 @@ public class RestEngineServiceImpl extends RemoteServiceServlet implements
 		}).start();
 	}
 
-	private String getJsonResponseStr(String restUrl) {
-		String jsonResponseStr = "";
-
-		try {
-			// create client response in json
-			ClientResponse<String> response = MscoServerUtils
-					.getGetClientResponseInJason(restUrl);
-
-			// build deployment list from json response
-			if (response != null && response.getStatus() == 200) {
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						new ByteArrayInputStream(
-								((String) response.getEntity()).getBytes())));
-				jsonResponseStr = br.readLine();
-			}
-		} catch (HttpHostConnectException ee) {
-			ee.printStackTrace();
-		} catch (SocketTimeoutException e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return jsonResponseStr;
-	}
-
 	public List<MyDeployment> getDeployments() throws IllegalArgumentException {
 		String restDeploymentUrl = MscoServerUtils
 				.getRestUrlStr(MscoDefines.DEPLOYMENT_REST_URL);
-		String jsonResponseStr = getJsonResponseStr(restDeploymentUrl);
+		String jsonResponseStr = MscoServerUtils.getJsonResponseStr(restDeploymentUrl);
 		JSONArray deploymentArray = (JSONArray) JSONSerializer
 				.toJSON(jsonResponseStr);
 
@@ -145,24 +103,30 @@ public class RestEngineServiceImpl extends RemoteServiceServlet implements
 
 	// Build both active and complete process instance lists
 	private void buildProcessInstanceLists() throws IllegalArgumentException {
+		if (deploymentList.size() == 0)
+		{
+			getDeployments();
+		}
+		
 		activeProcessInstanceList.clear();
 		completedProcessInstanceList.clear();
 		synchronized (activeProcessInstanceList) {
-			System.err.println("RestEngineServiceImpl.deploymentList.size: " + deploymentList.size());
 			for (MyDeployment deployment : deploymentList) {
 				String restProcessInstanceUrl = MscoDefines
 						.getProcessInstanceRestUrl(deployment.getIdentifier());
 				
-				String jsonResponseStr = getJsonResponseStr(restProcessInstanceUrl);
+				String jsonResponseStr = MscoServerUtils.getJsonResponseStr(restProcessInstanceUrl);
 				jsonResponseStr = jsonResponseStr.substring(18, jsonResponseStr.length() - 1);
+//				System.err.println("RestEngineServiceImpl.processInstande.jsonStr: " + jsonResponseStr);
+				
 				JSONArray processInstanceArray = (JSONArray) JSONSerializer
 						.toJSON(jsonResponseStr);
 
-				ProcessInstance processInstance = null;
+				MyProcessInstance processInstance = null;
 				try {
 					for (Object js : processInstanceArray) {
 						JSONObject json = (JSONObject) js;
-						processInstance = new ProcessInstance();
+						processInstance = new MyProcessInstance();
 						Integer id = (Integer) json.get("id");
 						Long idLong = id.longValue();
 						processInstance.setId(idLong);
@@ -196,9 +160,8 @@ public class RestEngineServiceImpl extends RemoteServiceServlet implements
 	}
 
 	// Return the process instance list to the caller
-	public List<ProcessInstance> getProcessInstances(Integer status)
+	public List<MyProcessInstance> getProcessInstances(Integer status)
 			throws IllegalArgumentException {
-		System.out.println("RestEngine.getProcessInstance.status: " + status);
 		buildProcessInstanceLists();
 		if (status == MscoDefines.ACTIVE_INSTANCE) {
 			return activeProcessInstanceList;

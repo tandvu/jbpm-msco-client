@@ -24,6 +24,16 @@ public class MscoDefines {
 	public static int COMPLETED_INSTANCE = 2;
 	public static int ACTIVE_INSTANCE = 1;
 	
+	public static String getProcessDefinitionUrl()
+	{
+		return SERVER + JBPM_CONSOLE + "rest/runtime/" + "org.jbpm:Evaluation:1.0" + "/process";
+	}
+	
+	public static String getVariableUrl(String deploymentId, String processInstanceId)
+	{
+		return SERVER + JBPM_CONSOLE + "rest/runtime/" + deploymentId + "/history/instance/"+ processInstanceId + "/variable";
+	}
+	
 	public static String getProcessInstanceRestUrl(String deploymentId)
 	{
 		return SERVER + JBPM_CONSOLE + "rest/runtime/" + deploymentId + "/history/instances";

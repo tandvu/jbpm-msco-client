@@ -13,7 +13,7 @@ public interface GreetingServiceAsync {
      */
     void getDeployments(AsyncCallback<java.util.List<MyDeployment>> callback);
     
-    void getProcessInstances(Integer status, AsyncCallback<java.util.List<com.msco.mil.shared.ProcessInstance>> callback);
+    void getProcessInstances(Integer status, AsyncCallback<java.util.List<com.msco.mil.shared.MyProcessInstance>> callback);
     void getTasks(AsyncCallback<java.util.List<com.msco.mil.shared.Task>> callback);
     void getActors(AsyncCallback<java.util.List<com.msco.mil.shared.Actor>> callback);
     /**

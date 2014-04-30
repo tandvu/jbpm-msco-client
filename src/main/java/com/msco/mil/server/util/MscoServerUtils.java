@@ -1,8 +1,14 @@
 package com.msco.mil.server.util;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 
+import org.apache.http.conn.HttpHostConnectException;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientRequestFactory;
 import org.jboss.resteasy.client.ClientResponse;
@@ -54,5 +60,36 @@ public class MscoServerUtils {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public static String getJsonResponseStr(String restUrl) {
+		String jsonResponseStr = "";
+
+		try {
+			// create client response in json
+			ClientResponse<String> response = MscoServerUtils
+					.getGetClientResponseInJason(restUrl);
+System.err.println("MscoServer.getJsonResponseStr.restUrl: " + restUrl + " response: " + response + " status: " + response.getStatus());
+			// build deployment list from json response
+			if (response != null && response.getStatus() == 200) {
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						new ByteArrayInputStream(
+								((String) response.getEntity()).getBytes())));
+				jsonResponseStr = br.readLine();
+				System.err.println("MscoServerutils.jsonResponsteStr: " + jsonResponseStr);
+			}
+		} catch (HttpHostConnectException ee) {
+			ee.printStackTrace();
+		} catch (SocketTimeoutException e) {
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return jsonResponseStr;
 	}
 }

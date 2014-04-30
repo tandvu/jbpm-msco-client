@@ -12,12 +12,8 @@ package com.msco.mil.client.tan.client;
  * http://www.sencha.com/products/gxt/license/
  */
 
-import java.util.List;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -25,9 +21,7 @@ import com.msco.mil.client.tan.client.grid.MyDeploymentGrid;
 import com.msco.mil.client.tan.client.grid.ProcessInstanceGrid;
 import com.msco.mil.client.tan.client.grid.StockGrid;
 import com.msco.mil.client.tan.client.grid.TextGrid;
-import com.msco.mil.shared.MyDeployment;
 import com.msco.mil.shared.MyDeploymentProperties;
-import com.msco.mil.shared.ProcessInstance;
 import com.msco.mil.shared.util.MscoDefines;
 //import com.sencha.gxt.explorer.client.model.Example.Detail;
 import com.sencha.gxt.widget.core.client.Portlet;
@@ -116,13 +110,16 @@ public class PortalLayoutPage implements IsWidget, EntryPoint {
     private void instantiateGrid() {
     	myDeploymentGrid.updateGrid();
     	
+    	/* This does not work as Thread is not supported in client side
     	//This is to give time for the deployment list finishes so Process Instance list can be built
     	try {
 			Thread.sleep(MscoDefines.REFRESH_RATE);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} */
+    	
+    	
     	processInstanceGrid.updateGrid(MscoDefines.ACTIVE_INSTANCE);
     }
     
