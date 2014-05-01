@@ -22,6 +22,7 @@ public class MscoServerUtils {
 			String urlString) {
 		ClientRequest clientRequest = getClientRequestFactory().createRequest(
 				urlString);
+//		System.err.println("MscoServerUtils.urlString: " + urlString);
 		clientRequest.accept("application/json");
 
 		try {
@@ -69,14 +70,14 @@ public class MscoServerUtils {
 			// create client response in json
 			ClientResponse<String> response = MscoServerUtils
 					.getGetClientResponseInJason(restUrl);
-System.err.println("MscoServer.getJsonResponseStr.restUrl: " + restUrl + " response: " + response + " status: " + response.getStatus());
+
 			// build deployment list from json response
 			if (response != null && response.getStatus() == 200) {
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						new ByteArrayInputStream(
 								((String) response.getEntity()).getBytes())));
 				jsonResponseStr = br.readLine();
-				System.err.println("MscoServerutils.jsonResponsteStr: " + jsonResponseStr);
+//				System.err.println("MscoServerutils.jsonResponsteStr: " + jsonResponseStr);
 			}
 		} catch (HttpHostConnectException ee) {
 			ee.printStackTrace();

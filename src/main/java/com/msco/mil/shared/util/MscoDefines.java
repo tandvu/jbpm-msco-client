@@ -24,6 +24,8 @@ public class MscoDefines {
 	public static int COMPLETED_INSTANCE = 2;
 	public static int ACTIVE_INSTANCE = 1;
 	
+	public static String REST_STR = SERVER + JBPM_CONSOLE + "rest";
+	
 	public static String getProcessDefinitionUrl()
 	{
 		return SERVER + JBPM_CONSOLE + "rest/runtime/" + "org.jbpm:Evaluation:1.0" + "/process";
