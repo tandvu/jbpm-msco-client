@@ -32,8 +32,8 @@ public class HomePage implements IsWidget, EntryPoint {
 	 */
 	public void onModuleLoad() {
 		System.out.println("HomePage.onModuleLoad()");
-//		RootPanel.get().add(new PortalLayoutPage());
-		RootPanel.get().add(new JsonGridExample());
+		RootPanel.get().add(new PortalLayoutPage());
+//		RootPanel.get().add(new JsonGridExample());
 	}
 
 	public Widget asWidget() {
